@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 常见爬虫反爬策略的处理办法及个人一些感悟 · Messay</title><meta name="description" content="常见爬虫反爬策略的处理办法及个人一些感悟 - Messay"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://messay.me/atom.xml" title="Messay"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://github.com/lovebaicai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/about" target="_self" class="nav-list-link">ABOUT</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">常见爬虫反爬策略的处理办法及个人一些感悟</h1><div class="post-info">Dec 12, 2017</div><div class="post-content"><h4 id="今年一年都是在与爬虫打交道，国内常见的电商平台都已经抓了遍，有些小体量的平台貌似也没放过。目前一共处理了30多个电商平台的数据抓取，一些反爬策略的体验及处理。"><a href="#今年一年都是在与爬虫打交道，国内常见的电商平台都已经抓了遍，有些小体量的平台貌似也没放过。目前一共处理了30多个电商平台的数据抓取，一些反爬策略的体验及处理。" class="headerlink" title="今年一年都是在与爬虫打交道，国内常见的电商平台都已经抓了遍，有些小体量的平台貌似也没放过。目前一共处理了30多个电商平台的数据抓取，一些反爬策略的体验及处理。"></a>今年一年都是在与爬虫打交道，国内常见的电商平台都已经抓了遍，有些小体量的平台貌似也没放过。目前一共处理了30多个电商平台的数据抓取，一些反爬策略的体验及处理。</h4><ul>
+<li>平台目前遇到的反爬策略以下几种，比较常见：<ol>
+<li>HTTP请求头限制（最简单，基础）</li>
+<li>IP地址限制</li>
+<li>IP+Cookie限制</li>
+<li>用户行为分析限制</li>
+<li>请求URL加时间戳salt，sign验证（最难处理）</li>
+<li>数据蜜罐</li>
+</ol>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li><p>对应的处理方法</p>
+<ol>
+<li>请求头限制：但凡是写过爬虫的，都会自己定义个header，这个最简单不过了，最好是定义一个随机的user-agent，然后定义一个中间件，随机取。</li>
+<li>IP地址限制：这个反爬最常用，最好的的处理方法就是自建一个ASDL拨号的代理池，使用民用的ASDL账号，隔段时间重新拨号，不容易被ban。如果是使用网上抓来的一些代理ip，估计都是被轮了无数遍，效果可能并不会很理想。</li>
+<li>IP+Cookie限制：目前几个大的电商平台都是使用这种方式来限制。taobao+tmall+amazon都是这种，淘宝，Amazon还好一点，使用较稳定的代理ip，速度慢一点，数据还是能保证的。tmall就不行了，一个ip地址请求几次，就强制让你登陆，这种就需要带Cookie登陆了。</li>
+<li>用户行为分析限制：这个好像是刚兴起的反爬策略，估计是和大数据相关的分析策略。淘宝目前的月销量 就是使用这种反爬。这种只能尽可能的模拟用户真实行为，或者有大量稳定的代理ip，切换速度要快，要不然还真没啥好的处理办法。</li>
+<li>请求URL加时间戳salt，sign验证：这种反爬策略一般就是一些小平台，没有web端站点，只有移动端APP，通过抓包能获取到json的url。比如贝店这个平台，就是这种。这个url就会带着时间戳的salt+sign。目前我并没有好的处理方法，分析不出来对方使用的加密方式，无从下手，只能在url失效之前，重新抓包，跑下数据。</li>
+<li>数据蜜罐：这种使用的，就我目前抓取的这些平台，使用的并不多。可能Amazon，ebay一些页面使用这个手段，没有具体测试。如果碰到了，就要具体分析是哪个数据出了问题，尽量不去获取这个数据，或者尽量pass这个页面。</li>
+</ol>
+</li>
+<li><p>一些感悟</p>
+<ol>
+<li>反反爬就那几种策略，但是反爬限制却是越来越高级，现在就可以分析用户行为，或许可能过不几年就用AI来反爬也说不定，毕竟魔高一尺道高一丈。</li>
+<li>爬虫偶尔写写可以，专职爬虫并不那么美好。</li>
+</ol>
+</li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/12/15/升级vmware14，Not-enough-physical-memory报错解决方法/" class="prev">PREV</a><a href="/2017/12/11/ELK时间问题总结/" class="next">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="http://messay.me">Messay</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script></body></html>

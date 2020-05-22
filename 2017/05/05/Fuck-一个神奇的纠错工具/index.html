@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Fuck,一个神奇的纠错工具 · Messay</title><meta name="description" content="Fuck,一个神奇的纠错工具 - Messay"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://messay.me/atom.xml" title="Messay"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://github.com/lovebaicai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/about" target="_self" class="nav-list-link">ABOUT</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">Fuck,一个神奇的纠错工具</h1><div class="post-info">May 5, 2017</div><div class="post-content"><h4 id="thefuck是一个使用Python编写的开源小工具，它可以自动纠正前一个命令的拼写错误。这个工具非常酷，尤其对于常常使用命令行的童鞋"><a href="#thefuck是一个使用Python编写的开源小工具，它可以自动纠正前一个命令的拼写错误。这个工具非常酷，尤其对于常常使用命令行的童鞋" class="headerlink" title="thefuck是一个使用Python编写的开源小工具，它可以自动纠正前一个命令的拼写错误。这个工具非常酷，尤其对于常常使用命令行的童鞋"></a>thefuck是一个使用Python编写的开源小工具，它可以自动纠正前一个命令的拼写错误。这个工具非常酷，尤其对于常常使用命令行的童鞋</h4><ul>
+<li>thefuck支持Mac OS X和Linux系统。</li>
+<li><p>安装步骤：</p>
+<ul>
+<li><p>ubuntu</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install python3-dev python3-pip</span><br><span class="line"> pip3 install --user thefuck (or sudo -H pip3 install thefuck)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>macOs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install thefuck</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>  </li>
+<li><p>用法：</p>
+<ul>
+<li><p>先alias一个别名，别名随便</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim  .vimrc or .bashrc</span><br><span class="line">eval &quot;$(thefuck --alias fuck)&quot;</span><br><span class="line">source ~/.vimrc or ~/.bashrc</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">  ➜ puthon</span><br><span class="line">No command &apos;puthon&apos; found, did you mean:</span><br><span class="line"> Command &apos;python&apos; from package &apos;python-minimal&apos; (main)</span><br><span class="line"> Command &apos;python&apos; from package &apos;python3&apos; (main)</span><br><span class="line">zsh: command not found: puthon</span><br><span class="line">➜ fuck</span><br><span class="line">python [enter/↑/↓/ctrl+c]</span><br><span class="line">Python 3.4.2 (default, Oct  8 2014, 13:08:17)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/nvbn/thefuck/master/example.gif" alt></p>
+</li>
+</ul>
+<blockquote>
+<p><a href="https://github.com/nvbn/thefuck" target="_blank" rel="noopener">Git地址</a><br>更多用法请参考README</p>
+</blockquote>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/05/25/python-ahocorasick-从本地文件读取文本，进行关键字匹配/" class="prev">PREV</a><a href="/2017/04/20/cassandra-CQL-常用操作/" class="next">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="http://messay.me">Messay</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script></body></html>

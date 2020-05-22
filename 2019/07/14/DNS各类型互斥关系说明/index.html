@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> DNS各类型互斥关系说明 · Messay</title><meta name="description" content="DNS各类型互斥关系说明 - Messay"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://messay.me/atom.xml" title="Messay"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://github.com/lovebaicai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/about" target="_self" class="nav-list-link">ABOUT</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">DNS各类型互斥关系说明</h1><div class="post-info">Jul 14, 2019</div><div class="post-content"><h4 id="前段时间完成了公司内部DNS解析平台的搭建，内里有许多坑，其中一个的就是DNS各种类型的互斥关系，简单说明如下。"><a href="#前段时间完成了公司内部DNS解析平台的搭建，内里有许多坑，其中一个的就是DNS各种类型的互斥关系，简单说明如下。" class="headerlink" title="前段时间完成了公司内部DNS解析平台的搭建，内里有许多坑，其中一个的就是DNS各种类型的互斥关系，简单说明如下。"></a>前段时间完成了公司内部DNS解析平台的搭建，内里有许多坑，其中一个的就是DNS各种类型的互斥关系，简单说明如下。</h4><h4 id="DNS有下列几种类型："><a href="#DNS有下列几种类型：" class="headerlink" title="DNS有下列几种类型："></a>DNS有下列几种类型：</h4><ul>
+<li>A记录： 将域名指向一个IPv4地址（例如：100.100.100.100），需要增加A记录;</li>
+<li>CNAME记录： 如果将域名指向一个域名，实现与被指向域名相同的访问效果，需要增加CNAME记录。这个域名一般是主机服务商提供的一个域名;</li>
+<li>MX记录： 建立电子邮箱服务，将指向邮件服务器地址，需要设置MX记录。建立邮箱时，一般会根据邮箱服务商提供的MX记录填写此记录;</li>
+<li>NS记录： 域名解析服务器记录，如果要将子域名指定某个域名服务器来解析，需要设置NS记录;</li>
+<li>TXT记录： 可任意填写，可为空。一般做一些验证记录时会使用此项，如：做SPF（反垃圾邮件）记录;</li>
+<li>AAAA记录： 将主机名（或域名）指向一个IPv6地址（例如：ff03:0:0:0:0:0:0:c1），需要添加AAAA记录;</li>
+<li>SRV记录： 添加服务记录服务器服务记录时会添加此项，SRV记录了哪台计算机提供了哪个服务。格式为：服务的名字.协议的类型（例如：_example-server._tcp）;</li>
+<li>SOA记录： SOA叫做起始授权机构记录，NS用于标识多台域名解析服务器，SOA记录用于在众多NS记录中那一台是主服务器;</li>
+<li>PTR记录： PTR记录是A记录的逆向记录，又称做IP反查记录或指针记录，负责将IP反向解析为域名;</li>
+<li>显性URL转发记录： 将域名指向一个http(s)协议地址，访问域名时，自动跳转至目标地址。例如：将<a href="http://www.liuht.cn显性转发到www.itbilu.com后，访问www.liuht.cn时，地址栏显示的地址为：www.itbilu.com" target="_blank" rel="noopener">www.liuht.cn显性转发到www.itbilu.com后，访问www.liuht.cn时，地址栏显示的地址为：www.itbilu.com</a>;</li>
+<li>隐性UR转发记录L： 将域名指向一个http(s)协议地址，访问域名时，自动跳转至目标地址，隐性转发会隐藏真实的目标地址。例如：将<a href="http://www.liuht.cn显性转发到www.itbilu.com后，访问www.liuht.cn时，地址栏显示的地址仍然是：www.liuht.cn" target="_blank" rel="noopener">www.liuht.cn显性转发到www.itbilu.com后，访问www.liuht.cn时，地址栏显示的地址仍然是：www.liuht.cn</a>;</li>
+</ul>
+<a id="more"></a>
+<h4 id="互斥关系说明："><a href="#互斥关系说明：" class="headerlink" title="互斥关系说明："></a>互斥关系说明：</h4><ul>
+<li>任何类型的主机记录，都不能与cname类型的主机记录冲突；NS类型的主机记录自身不冲突，但与其他记录都冲突(主机记录为@除外)；A,MX,TXT类型的主机记录自身不冲突；</li>
+<li>A类型记录值只能为ip地址，CNAME类型记录值只能为域名，NS类型记录值和TXT类型记录值可以为任意值，MX类型记录值只能为ip地址和域名</li>
+<li>TXT主机记录可以有特殊字符（格式为域名），其他类型的主机记录不能有特殊字符;</li>
+</ul>
+<p><img src="https://i.loli.net/2019/07/14/5d2b4143883dd49976.jpg" alt="记录类型互斥关系图.jpg"></p>
+<h4 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h4><ul>
+<li>DNS类型参考：<a href="https://itbilu.com/other/relate/EyxzdVl3.html" target="_blank" rel="noopener">https://itbilu.com/other/relate/EyxzdVl3.html</a></li>
+<li>互斥图参考：<a href="https://www.cloudxns.net/Support/detail/id/20.html" target="_blank" rel="noopener">https://www.cloudxns.net/Support/detail/id/20.html</a></li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2019/07/16/Centos6-10-安装Docker-17-03-2-ce/" class="prev">PREV</a><a href="/2019/07/14/test/" class="next">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="http://messay.me">Messay</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script></body></html>

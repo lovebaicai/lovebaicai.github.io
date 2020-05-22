@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 使用ruby连接Cassandra报错（Timed out）解决方法 · Messay</title><meta name="description" content="使用ruby连接Cassandra报错（Timed out）解决方法 - Messay"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://messay.me/atom.xml" title="Messay"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://github.com/lovebaicai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/about" target="_self" class="nav-list-link">ABOUT</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">使用ruby连接Cassandra报错（Timed out）解决方法</h1><div class="post-info">Aug 15, 2017</div><div class="post-content"><ul>
+<li>公司es搜索使用源数据存储在Cassandra数据库，今天接到需求，需要查询每个id总数量</li>
+<li>有个ruby在跑Cassandra数据，懒得改成python，直接用ruby写，结果查询报错:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/home/ops/.rvm/gems/ruby-1.9.3-p551/gems/cassandra-driver-3.1.0/lib/cassandra/future.rb:631:in `get&apos;: Timed out (Cassandra::Errors::TimeoutError)</span><br><span class="line">from cassandra-driver-3.1.0/lib/cassandra/future.rb:396:in `get&apos;</span><br><span class="line">from /home/ops/.rvm/gems/ruby-1.9.3-p551/gems/cassandra-driver-3.1.0/lib/cassandra/session.rb:123:in `execute&apos;</span><br><span class="line">from ./validate.rb:30:in `&lt;main&gt;&apos;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li><p>解决方法如下：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session.execute(<span class="string">"select count(*) FROM keyspacename.tabname WHERE source='keyword'"</span>, <span class="symbol">timeout:</span><span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果是在cqlsh里面报错timeout，可使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cqlsh --request-timeout 120 host</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参考链接:</p>
+<ul>
+<li><a href="https://datastax.github.io/ruby-driver/features/error_handling/request_execution/" target="_blank" rel="noopener">Ruby Driver for Apache Cassandra
+</a></li>
+<li><a href="https://stackoverflow.com/questions/29394382/operation-time-out-error-in-cqlsh-console-of-cassandra" target="_blank" rel="noopener">Operation Time Out Error in cqlsh console of cassandra
+</a></li>
+</ul>
+</li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/08/18/Scrapy请求URL，302异常个人解决-user-agent方面/" class="prev">PREV</a><a href="/2017/08/08/Java判断某年某月多少天/" class="next">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="http://messay.me">Messay</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script></body></html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> kubernetes介绍 · Messay</title><meta name="description" content="kubernetes介绍 - Messay"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="http://messay.me/atom.xml" title="Messay"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://github.com/lovebaicai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/about" target="_self" class="nav-list-link">ABOUT</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">kubernetes介绍</h1><div class="post-info">Jun 13, 2018</div><div class="post-content"><h4 id="初步介绍"><a href="#初步介绍" class="headerlink" title="初步介绍:"></a>初步介绍:</h4><ul>
+<li>Kubernetes是Google开源的容器集群管理系统，其提供应用部署、维护、 扩展机制等功能，利用Kubernetes能方便地管理跨机器运行容器化的应用，其主要功能如下：<ol>
+<li>使用Docker对应用程序包装(package)、实例化(instantiate)、运行(run)。</li>
+<li>以集群的方式运行、管理跨机器的容器。</li>
+<li>解决Docker跨机器容器之间的通讯问题。</li>
+<li>Kubernetes的自我修复机制使得容器集群总是运行在用户期望的状态。</li>
+</ol>
+</li>
+</ul>
+<h4 id="Kubernetes主要概念"><a href="#Kubernetes主要概念" class="headerlink" title="Kubernetes主要概念:"></a>Kubernetes主要概念:</h4><ol>
+<li>Node：是kubernetes集群的工作负载节点。Master为其分配工作，当某个Node宕机时，Master会将其工作负载自动转移到其他节点。</li>
+<li>Pods：Pod是Kubernetes的基本操作单元，把相关的一个或多个容器构成一个Pod，通常Pod里的容器运行相同的应用。Pod包含的容器运行在同一个Minion(Host)上，看作一个统一管理单元，共享相同的volumes和network namespace/IP和Port空间。Kubernetes为每个Pod都分配了唯一的IP地址，称之为PodIP，一个Pod里的多个容器共享PodIP地址。</li>
+<li>Services：Services也是Kubernetes的基本操作单元，是真实应用服务的抽象，每一个服务后面都有很多对应的容器来支持，通过Proxy的port和服务selector决定服务请求传递给后端提供服务的容器，对外表现为一个单一访问接口，外部不需要了解后端如何运行，这给扩展或维护后端带来很大的好处。</li>
+<li>Replication Controllers(副本控制器)：Replication Controller确保任何时候Kubernetes集群中有指定数量的pod副本(replicas)在运行， 如果少于指定数量的pod副本(replicas)，Replication Controller会启动新的Container，反之会杀死多余的以保证数量不变。Replication Controller使用预先定义的pod模板创建pods，一旦创建成功，pod 模板和创建的pods没有任何关联，可以修改pod模板而不会对已创建pods有任何影响，也可以直接更新通过Replication Controller创建的pods。对于利用pod模板创建的pods，Replication Controller根据label selector来关联，通过修改pods的label可以删除对应的pods。</li>
+<li>Namespace: 命名空间为Kubernetes集群提供虚拟的隔离作用，Kubernetes集群初始有两个命名空间，分别是默认命名空间default和系统命名空间kube-system，除此以外，管理员可以可以创建新的命名空间满足需要。</li>
+<li>Volume：Kubernetes的存储卷的生命周期和作用范围是一个Pod。每个Pod中声明的存储卷由Pod中的所有容器共享。Kubernetes支持非常多的存储卷类型，特别的，支持多种公有云平台的存储，包括AWS，Google和Azure云；支持多种分布式存储包括GlusterFS和Ceph；也支持较容易使用的主机本地目录hostPath和NFS。</li>
+</ol>
+<a id="more"></a>
+<h4 id="Kubernetes主要构件"><a href="#Kubernetes主要构件" class="headerlink" title="Kubernetes主要构件:"></a>Kubernetes主要构件:</h4><h4 id="Master："><a href="#Master：" class="headerlink" title="Master："></a>Master：</h4><ol>
+<li>Kubernetes API Server:作为Kubernetes系统的入口，其封装了核心对象的增删改查操作，以RESTful API接口方式提供给外部客户和内部组件调用。维护的REST对象持久化到Etcd中存储。</li>
+<li>Kubernetes Scheduler:为新建立的Pod进行节点(node)选择(即分配机器)，负责集群的资源调度。组件抽离，可以方便替换成其他调度器。</li>
+<li>Kubernetes Controller负责执行各种控制器，目前已经提供了很多控制器来保证Kubernetes的正常运行。</li>
+</ol>
+<p><img src="https://img-blog.csdn.net/20170108144418224" alt></p>
+<h4 id="Node"><a href="#Node" class="headerlink" title="Node:"></a>Node:</h4><ol>
+<li>Kubelet：主要包含容器管理，镜像管理，Volume管理等。同时kubelet也是一个rest服务，和pod相关的命令操作都是通过调用接口实现的.Kubelet会从Kubernetes API Server接收Pod的创建请求，启动和停止容器，监控容器运行状态并汇报给Kubernetes API Server。</li>
+<li>Kube-proxy：负责为Pod创建代理服务，Kubernetes Proxy会从Kubernetes API Server获取所有的Service信息，并根据Service的信息创建代理服务，实现Service到Pod的请求路由和转发，从而实现Kubernetes层级的虚拟转发网络。用于实现Kubernetes的service机制。提供一部分SDN功能以及集群内部的智能LoadBalancer</li>
+<li>Docker：Node上需要运行容器服务<br><img src="https://img-blog.csdn.net/20170108144528246" alt></li>
+</ol>
+<h4 id="Etcd：一款分布式的一致性KV存储，主要用于共享配置和服务发现"><a href="#Etcd：一款分布式的一致性KV存储，主要用于共享配置和服务发现" class="headerlink" title="Etcd：一款分布式的一致性KV存储，主要用于共享配置和服务发现"></a>Etcd：一款分布式的一致性KV存储，主要用于共享配置和服务发现</h4><ol>
+<li>作为配置中心和存储服务，保存了所有组件的定义以及状态，Kubernetes的多个组件之间的互相交互也主要通过etcd。在k8s中，所有数据的存储以及操作记录都在etcd中进行存储，所以对于k8s集群来说，etcd是相当重要的，一旦故障，可能导致整个集群的瘫痪或者数据丢失。</li>
+<li>网络插件flannel、对于其它网络插件需要用到etcd存储网络的配置信息</li>
+<li>kubernetes本身，包括各种对象的状态和元信息配置</li>
+</ol>
+<h4 id="Kubectl"><a href="#Kubectl" class="headerlink" title="Kubectl"></a>Kubectl</h4><ol>
+<li>通过客户端的kubectl命令集操作，API Server响应对应的命令结果，从而达到对kubernetes集群的管理。</li>
+</ol>
+<h4 id="主流网络插件介绍"><a href="#主流网络插件介绍" class="headerlink" title="主流网络插件介绍"></a>主流网络插件介绍</h4><ul>
+<li><p>flannel：flannel是coreos为k8s设计的一个非常简洁的多节点3层容器网络互联方案。</p>
+<ol>
+<li>flannel旨在解决不同host上的容器网络互联问题，大致原理是每个 host 分配一个 subnet，容器从此 subnet 中分配 IP，这些 IP 可以在 host 间路由，容器间无需 NAT 和 port mapping 就可以跨主机通信。每个 subnet 都是从一个更大的 IP 池中划分的，flannel 会在每个主机上运行一个叫 flanneld 的 agent，其职责就是从池子中分配 subnet。为了在各个主机间共享信息，flannel 用 etcd（如果是k8s集群会直接调用k8s api）存放网络配置、已分配的 subnet、host 的 IP 等信息。节点间的通信有以下多种backen支持。</li>
+<li>VXLAN：推荐配置，利用内核级别的VXLAN来封装host之间传送的包。<br>host-gw：对于性能有要求的推荐配置，但是不支持云环境。通过在host的路由表中直接创建到其他主机 subnet 的路由条目，从而实现容器跨主机通信。要求所有host在二层互联。</li>
+<li>udp：默认模式，通常用于debug，或以上两种条件都不具备。<br><img src="http://www.youruncloud.com/uploadFiles/images/11(3" alt>.png)</li>
+</ol>
+</li>
+<li><p>calico：calico是一个比较完整的项目，专为云环境设置，且比较注重安全性，也就是网络隔离，ACL控制等都是可以实现。</p>
+<ol>
+<li>calico是一个纯三层的数据中心网络方案，实现类似于flannel host-gw,不过它没有复用docker 的docker0 bridge，而是自己实现的。</li>
+<li>Calico在每一个计算节点利用Linux Kernel实现了一个高效的vRouter来负责数据转发，而每个vRouter通过BGP协议负责把自己上运行的workload的路由信息像整个Calico网络内传播——小规模部署可以直接互联，大规模下可通过指定的BGP route reflector来完成。</li>
+<li>Calico基于iptables还提供了丰富而灵活的网络Policy，保证通过各个节点上的ACLs来提供Workload的多租户隔离、安全组以及其他可达性限制等功能。</li>
+<li>对于有IP限制的host，也可以使用calico的IPIP方案（overlay方式）。<br><img src="http://oeptotikb.bkt.clouddn.com/20171212-calico-arch.jpg" alt></li>
+</ol>
+</li>
+</ul>
+<h4 id="整体系统架构图"><a href="#整体系统架构图" class="headerlink" title="整体系统架构图"></a>整体系统架构图</h4><p><img src="https://raw.githubusercontent.com/kubernetes/kubernetes/release-1.2/docs/design/architecture.png" alt></p>
+</div></article></div></main><footer><div class="paginator"><a href="/2018/06/26/Kubernetes强制删除一直处于Terminating状态的pod，namespace/" class="prev">PREV</a><a href="/2018/06/07/Centos-Ubuntu安装Docker-17-03-02版本问题及解决/" class="next">NEXT</a></div><div class="copyright"><p>© 2015 - 2020 <a href="http://messay.me">Messay</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script></body></html>
