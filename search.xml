@@ -141,11 +141,6 @@
     <content type="text"><![CDATA[今年一年都是在与爬虫打交道，国内常见的电商平台都已经抓了遍，有些小体量的平台貌似也没放过。目前一共处理了30多个电商平台的数据抓取，一些反爬策略的体验及处理。 平台目前遇到的反爬策略以下几种，比较常见： HTTP请求头限制（最简单，基础） IP地址限制 IP+Cookie限制 用户行为分析限制 请求URL加时间戳salt，sign验证（最难处理） 数据蜜罐 对应的处理方法 请求头限制：但凡是写过爬虫的，都会自己定义个header，这个最简单不过了，最好是定义一个随机的user-agent，然后定义一个中间件，随机取。 IP地址限制：这个反爬最常用，最好的的处理方法就是自建一个ASDL拨号的代理池，使用民用的ASDL账号，隔段时间重新拨号，不容易被ban。如果是使用网上抓来的一些代理ip，估计都是被轮了无数遍，效果可能并不会很理想。 IP+Cookie限制：目前几个大的电商平台都是使用这种方式来限制。taobao+tmall+amazon都是这种，淘宝，Amazon还好一点，使用较稳定的代理ip，速度慢一点，数据还是能保证的。tmall就不行了，一个ip地址请求几次，就强制让你登陆，这种就需要带Cookie登陆了。 用户行为分析限制：这个好像是刚兴起的反爬策略，估计是和大数据相关的分析策略。淘宝目前的月销量 就是使用这种反爬。这种只能尽可能的模拟用户真实行为，或者有大量稳定的代理ip，切换速度要快，要不然还真没啥好的处理办法。 请求URL加时间戳salt，sign验证：这种反爬策略一般就是一些小平台，没有web端站点，只有移动端APP，通过抓包能获取到json的url。比如贝店这个平台，就是这种。这个url就会带着时间戳的salt+sign。目前我并没有好的处理方法，分析不出来对方使用的加密方式，无从下手，只能在url失效之前，重新抓包，跑下数据。 数据蜜罐：这种使用的，就我目前抓取的这些平台，使用的并不多。可能Amazon，ebay一些页面使用这个手段，没有具体测试。如果碰到了，就要具体分析是哪个数据出了问题，尽量不去获取这个数据，或者尽量pass这个页面。 一些感悟 反反爬就那几种策略，但是反爬限制却是越来越高级，现在就可以分析用户行为，或许可能过不几年就用AI来反爬也说不定，毕竟魔高一尺道高一丈。 爬虫偶尔写写可以，专职爬虫并不那么美好。]]></content>
   </entry>
   <entry>
-    <title><![CDATA[ELK时间问题总结]]></title>
-    <url>%2F2017%2F12%2F11%2FELK%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93%2F</url>
-    <content type="text"><![CDATA[使用分布式爬虫抓取的报错log，需要拿来分析，降低平台抓取错误率。使用FELK（Filebeat+ElastiSearch+Logstash+Kibana）框架。碰到的时间相关问题总结一下。 logstash写入es时间为获取日志时间，非日志打印时间 解决方法：使用target替换当前写入Es的timestamp（若需要kibana的时间range功能，此字段必须保留） 123456date &#123; match =&gt; [&quot;logdate(自己定义的logtime)&quot;, &quot;yyyy-MM-dd HH:mm:ss&quot;] target =&gt; &quot;@timestamp&quot; &quot;locale&quot; =&gt; &quot;en&quot; timezone =&gt; &quot;UTC&quot;&#125; Es时间准确，kibana显示相差8个小时 解决方法：修改kibana时区设置 kibana-Visualize按照固定间隔生成图表 操作方法：]]></content>
-  </entry>
-  <entry>
     <title><![CDATA[Ansible Playbook执行多个tasks配置分析]]></title>
     <url>%2F2017%2F10%2F25%2FAnsible-Playbook%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AAtasks%E9%85%8D%E7%BD%AE%E5%88%86%E6%9E%90%2F</url>
     <content type="text"><![CDATA[分布式爬虫需要多机器配置，又懒得每台机器都去登录配置环境，于是用了Ansible，相当方便。关于一个playbook配置执行多个tasks，分享一波。 网上充斥各种教程，都是让你这么来执行多个tasks：task list中的各任务按次序逐个在hosts中指定的所有主机上执行即在所有主机上完成第一个任务后再开始第二个。在运行自下而下某playbook时如果中途发生错误所有已执行任务都将回滚因此在更正playbook后重新执行一次即可。 123456tasks: - name: echo date command: echo &quot;date&quot;tasks: - name: echo date_output command: echo &quot;date_output&quot; 然而并不能按照上面的说法来依次执行，这种写法只会报个WARNING，然后只执行最后一个tasks： 1[WARNING]: While constructing a mapping from /opt/ansible/test.yaml, line 1, column 2, found a duplicate dict key (tasks). Using last defined value only. playbook在同一个指定操作的远程主机并不能顺序执行多个tasks。正确的写法，应该是把命令全部写在一个tasks里，like this： 12345tasks: - name: echo date command: echo &quot;date&quot; - name: echo date_output command: echo &quot;date_output&quot; 在多个指定操作的远程主机可以顺序执行多个tasks： 123456789- hosts: webservers #指定操作的远程主机 tasks: - name: echo date command: echo &quot;date&quot; - hosts: dbservers #另一组远程主机 tasks: - name: echo date_output command: echo &quot;date_output&quot; 参考链接： ansible小结（八）ansible-playbook简单使用 Ansible 进阶技巧 Ansible–playbook基础]]></content>
@@ -360,9 +355,9 @@
         <category>Python</category>
       </categories>
       <tags>
-        <tag>Python自动化</tag>
         <tag>Linux</tag>
         <tag>Disk</tag>
+        <tag>Python自动化</tag>
       </tags>
   </entry>
   <entry>
